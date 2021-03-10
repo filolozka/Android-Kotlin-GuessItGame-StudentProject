@@ -25,7 +25,6 @@ import android.view.ViewGroup
 import androidx.core.content.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import com.example.android.guesstheword.R
@@ -38,14 +37,6 @@ class GameFragment : Fragment() {
 
     private lateinit var viewModel: GameViewModel
 
-    // The current word
-    private var word = ""
-
-    // The current score
-    private var score = 0
-
-    // The list of words - the front of the list is the next word to guess
-    private lateinit var wordList: MutableList<String>
 
     private lateinit var binding: GameFragmentBinding
 
@@ -60,29 +51,47 @@ class GameFragment : Fragment() {
                 false
         )
 
+        // Get the viewmodel
+        Log.i("GameFragment", "Called ViewModelProvider")
         viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
-        Log.i("ViewModel", "Called ViewModelProvider()")
 
-        resetList()
-        nextWord()
+
+        binding.correctButton.setOnClickListener {
+            viewModel.onCorrect()
+            updateScoreText()
+            updateWordText()
+        }
+        binding.skipButton.setOnClickListener {
+            viewModel.onSkip()
+            updateScoreText()
+            updateWordText()
+        }
+        updateScoreText()
+        updateWordText()
 
         return binding.root
 
     }
 
     /**
-     * Given a pattern, this method makes sure the device buzzes
+
+     * Called when the game is finished
      */
-    private fun buzz(pattern: LongArray) {
-        val buzzer = activity?.getSystemService<Vibrator>()
-        buzzer?.let {
-            // Vibrate for 500 milliseconds
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                buzzer.vibrate(VibrationEffect.createWaveform(pattern, -1))
-            } else {
-                //deprecated in API 26
-                buzzer.vibrate(pattern, -1)
-            }
-        }
+
+    private fun gameFinished() {
+        val action = GameFragmentDirections.actionGameToScore(viewModel.score)
+        findNavController(this).navigate(action)
+    }
+
+
+    /** Methods for updating the UI **/
+
+    private fun updateWordText() {
+        binding.wordText.text = viewModel.word
+
+    }
+
+    private fun updateScoreText() {
+        binding.scoreText.text = viewModel.score.toString()
     }
 }
