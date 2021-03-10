@@ -16,11 +16,13 @@
 
 package com.example.android.guesstheword.screens.game
 
+import android.os.Build
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -35,6 +37,7 @@ import com.example.android.guesstheword.databinding.GameFragmentBinding
 class GameFragment : Fragment() {
 
     private lateinit var viewModel: GameViewModel
+
 
     private lateinit var binding: GameFragmentBinding
 
@@ -52,6 +55,7 @@ class GameFragment : Fragment() {
         // Get the viewmodel
         viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
 
+        viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
         binding.correctButton.setOnClickListener {
             viewModel.onCorrect()
         }
@@ -59,12 +63,7 @@ class GameFragment : Fragment() {
             viewModel.onSkip()
         }
 
-        /** Setting up LiveData observation relationship **/
-        viewModel.word.observe(this, Observer { newWord ->
-            binding.wordText.text = newWord
-        })
-
-        viewModel.score.observe(this, Observer { newScore ->
+        viewModel.score.observe(viewLifecycleOwner, Observer { newScore ->
             binding.scoreText.text = newScore.toString()
         })
 
@@ -86,4 +85,13 @@ class GameFragment : Fragment() {
 
     }
 
+    /**
+
+     * Called when the game is finished
+     */
+    fun gameFinished() {
+        val currentScore = viewModel.score.value ?: 0
+        val action = GameFragmentDirections.actionGameToScore(currentScore)
+        findNavController(this).navigate(action)
+    }
 }
