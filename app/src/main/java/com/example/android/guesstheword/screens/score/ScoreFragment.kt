@@ -23,7 +23,9 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.android.guesstheword.R
@@ -50,14 +52,17 @@ class ScoreFragment : Fragment() {
                 container,
                 false
         )
-
         val scoreFragmentArgs by navArgs<ScoreFragmentArgs>()
 
         viewModelFactory = ScoreViewModelFactory(scoreFragmentArgs.score)
-        viewModel = ViewModelProvider(this, viewModelFactory)
-                .get(ScoreViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(ScoreViewModel::class.java)
 
-        binding.scoreViewModel = viewModel
+        // Get args using by navArgs property delegate
+        viewModel.score.observe(viewLifecycleOwner, Observer { newScore -> binding.scoreText.text = newScore.toString() })
+        binding.playAgainButton.setOnClickListener { onPlayAgain() }
+
+        return binding.root
+    }
 
         // Specify the current activity as the lifecycle owner of the binding. This is used so that
         // the binding can observe LiveData updates
