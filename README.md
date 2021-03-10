@@ -1,5 +1,5 @@
 # Application Architecture - The UI Layer - Guess It!
-This toy app is my homework at the [Android App Development in Kotlin course on Udacity](https://www.udacity.com/course/developing-android-apps-with-kotlin--ud9012).
+This toy app is my homework for the [Android App Development in Kotlin course on Udacity](https://www.udacity.com/course/developing-android-apps-with-kotlin--ud9012).
 
 ## Guess It!
 
