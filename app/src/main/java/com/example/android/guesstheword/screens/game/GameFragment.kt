@@ -39,6 +39,7 @@ class GameFragment : Fragment() {
 
     private lateinit var viewModel: GameViewModel
 
+
     private lateinit var binding: GameFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -58,10 +59,13 @@ class GameFragment : Fragment() {
         // Set the viewmodel for databinding - this allows the bound layout access to all of the
         // data in the VieWModel
         binding.gameViewModel = viewModel
+        binding.lifecycleOwner = this
 
         // Specify the current activity as the lifecycle owner of the binding. This is used so that
         // the binding can observe LiveData updates
         binding.setLifecycleOwner(this)
+
+
 
         // Sets up event listening to navigate the player when the game is finished
         viewModel.eventGameFinish.observe(viewLifecycleOwner, Observer { isFinished ->
@@ -80,6 +84,7 @@ class GameFragment : Fragment() {
                 viewModel.onBuzzComplete()
             }
         })
+
 
         return binding.root
 
