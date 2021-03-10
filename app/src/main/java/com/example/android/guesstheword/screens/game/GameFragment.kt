@@ -16,10 +16,13 @@
 
 package com.example.android.guesstheword.screens.game
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -35,6 +38,7 @@ class GameFragment : Fragment() {
 
     private lateinit var viewModel: GameViewModel
 
+
     private lateinit var binding: GameFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -49,8 +53,8 @@ class GameFragment : Fragment() {
         )
 
         // Get the viewmodel
-        viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
 
+        viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
         binding.correctButton.setOnClickListener {
             viewModel.onCorrect()
         }
@@ -71,6 +75,7 @@ class GameFragment : Fragment() {
     }
 
     /**
+
      * Called when the game is finished
      */
     fun gameFinished() {
@@ -78,5 +83,4 @@ class GameFragment : Fragment() {
         val action = GameFragmentDirections.actionGameToScore(currentScore)
         findNavController(this).navigate(action)
     }
-
 }
