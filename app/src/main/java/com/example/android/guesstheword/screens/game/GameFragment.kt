@@ -16,11 +16,13 @@
 
 package com.example.android.guesstheword.screens.game
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -34,6 +36,7 @@ import com.example.android.guesstheword.databinding.GameFragmentBinding
 class GameFragment : Fragment() {
 
     private lateinit var viewModel: GameViewModel
+
 
     private lateinit var binding: GameFragmentBinding
 
@@ -65,14 +68,15 @@ class GameFragment : Fragment() {
         }
         updateScoreText()
         updateWordText()
+
         return binding.root
 
     }
 
     /**
+
      * Called when the game is finished
      */
-
 
     private fun gameFinished() {
         val action = GameFragmentDirections.actionGameToScore(viewModel.score)
