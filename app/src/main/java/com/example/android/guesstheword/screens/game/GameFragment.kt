@@ -18,8 +18,7 @@ package com.example.android.guesstheword.screens.game
 
 import android.os.Build
 import android.os.Bundle
-import android.os.VibrationEffect
-import android.os.Vibrator
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +38,15 @@ class GameFragment : Fragment() {
 
     private lateinit var viewModel: GameViewModel
 
+    // The current word
+    private var word = ""
+
+    // The current score
+    private var score = 0
+
+    // The list of words - the front of the list is the next word to guess
+    private lateinit var wordList: MutableList<String>
+
     private lateinit var binding: GameFragmentBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -52,34 +60,11 @@ class GameFragment : Fragment() {
                 false
         )
 
-        // Get the viewmodel
         viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
+        Log.i("ViewModel", "Called ViewModelProvider()")
 
-        // Set the viewmodel for databinding - this allows the bound layout access to all of the
-        // data in the VieWModel
-        binding.gameViewModel = viewModel
-
-        // Specify the current activity as the lifecycle owner of the binding. This is used so that
-        // the binding can observe LiveData updates
-        binding.setLifecycleOwner(this)
-
-        // Sets up event listening to navigate the player when the game is finished
-        viewModel.eventGameFinish.observe(viewLifecycleOwner, Observer { isFinished ->
-            if (isFinished) {
-                val currentScore = viewModel.score.value ?: 0
-                val action = GameFragmentDirections.actionGameToScore(currentScore)
-                findNavController(this).navigate(action)
-                viewModel.onGameFinishComplete()
-            }
-        })
-
-        // Buzzes when triggered with different buzz events
-        viewModel.eventBuzz.observe(viewLifecycleOwner, Observer { buzzType ->
-            if (buzzType != GameViewModel.BuzzType.NO_BUZZ) {
-                buzz(buzzType.pattern)
-                viewModel.onBuzzComplete()
-            }
-        })
+        resetList()
+        nextWord()
 
         return binding.root
 
